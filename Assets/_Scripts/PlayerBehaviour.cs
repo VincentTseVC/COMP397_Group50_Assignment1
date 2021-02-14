@@ -15,7 +15,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     [Header("Ground Check Settings")]
     public Transform groundCheck;
-    public float groundRadius = 0.5f;
+    public float groundRadius = 0.4f;
     public LayerMask groundMask;
     public bool isGrounded;
 
@@ -23,6 +23,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     public AudioSource jump;
     private AudioSource _jump;
+
 
 
     void Start()
@@ -68,4 +69,5 @@ public class PlayerBehaviour : MonoBehaviour
         Gizmos.color = Color.white;
         Gizmos.DrawWireSphere(groundCheck.position, groundRadius);
     }
+
 }

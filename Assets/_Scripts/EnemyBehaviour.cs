@@ -17,18 +17,40 @@ public class EnemyBehaviour : MonoBehaviour
 
     public HealthBar healthBar;
 
+    public float attackRadius = 10.0f;
+
+    private Vector3 originalPosition;
+
     // Start is called before the first frame update
     void Start()
     {
         navMeshAgent = GetComponent<NavMeshAgent>();
         healthBar.SetMaxHealth(maxHealth);
 
+        originalPosition = transform.position;
+
     }
 
     // Update is called once per frame
     void Update()
     {
-        navMeshAgent.SetDestination(player.position);
+        float distanceFromPlayer = Vector3.Distance(transform.position, player.position);
+
+        if (distanceFromPlayer <= attackRadius)
+            navMeshAgent.SetDestination(player.position);
+
+
+        float distanceFromOrigin = Vector3.Distance(originalPosition, transform.position);
+
+        if (distanceFromOrigin > attackRadius)
+            navMeshAgent.SetDestination(originalPosition);
+
+
+
+
+
+
+
 
         // testing
         //if (Input.GetKeyDown(KeyCode.A))
