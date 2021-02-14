@@ -19,10 +19,16 @@ public class PlayerBehaviour : MonoBehaviour
     public LayerMask groundMask;
     public bool isGrounded;
 
+    public GameController gameController;
+
+    public AudioSource jump;
+    private AudioSource _jump;
+
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
+        _jump = gameController.audioSources[(int)SoundClip.JUMP];
     }
 
 
@@ -41,7 +47,16 @@ public class PlayerBehaviour : MonoBehaviour
         controller.Move(move * maxSpeed * Time.deltaTime);
 
         if (Input.GetButton("Jump") && isGrounded)
+        {
             velocity.y = Mathf.Sqrt(jumpHeight * -2.0f * gravity);
+
+            //play jump audio
+            jump.Play();
+
+        }
+
+
+
 
         velocity.y += gravity * Time.deltaTime;
 

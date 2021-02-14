@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class GameController : MonoBehaviour
 {
+    public SoundClip activeSoundClip;
+    public AudioSource[] audioSources;
+
     // Start is called before the first frame update
     void Start()
     {
