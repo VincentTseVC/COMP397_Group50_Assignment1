@@ -2,7 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.SceneManagement;
-
+/**
+ * Vincent Tse.
+ * 2021-02-13
+ */
 public class GameOver : MonoBehaviour
 {
     private void OnTriggerEnter(Collider other)

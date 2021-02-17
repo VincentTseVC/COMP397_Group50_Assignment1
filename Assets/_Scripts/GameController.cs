@@ -1,7 +1,10 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+/**
+ * Vincent Tse.
+ * 2021-02-13
+ */
 public class GameController : MonoBehaviour
 {
     public SoundClip activeSoundClip;

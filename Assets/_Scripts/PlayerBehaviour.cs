@@ -2,6 +2,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+
+/**
+ * Vincent Tse.
+ * 2021-02-13
+ */
+
+
 public class PlayerBehaviour : MonoBehaviour
 {
     [Header("Controllers")]
@@ -24,12 +31,20 @@ public class PlayerBehaviour : MonoBehaviour
     public AudioSource jump;
     private AudioSource _jump;
 
+    [Header("UI")]
+    public GameObject inventory;
+    private bool inventoryActive = false;
+
+
+
 
 
     void Start()
     {
         controller = GetComponent<CharacterController>();
         _jump = gameController.audioSources[(int)SoundClip.JUMP];
+
+        inventory.SetActive(inventoryActive);
     }
 
 
@@ -43,9 +58,11 @@ public class PlayerBehaviour : MonoBehaviour
         float x = Input.GetAxis("Horizontal");
         float z = Input.GetAxis("Vertical");
 
-        Vector3 move = transform.right * x + transform.forward * z;
-
-        controller.Move(move * maxSpeed * Time.deltaTime);
+        if (x != 0 || z != 0)
+        {
+            Vector3 move = transform.right * x + transform.forward * z;
+            controller.Move(move * maxSpeed * Time.deltaTime);
+        }
 
         if (Input.GetButton("Jump") && isGrounded)
         {
@@ -56,12 +73,25 @@ public class PlayerBehaviour : MonoBehaviour
 
         }
 
-
-
-
         velocity.y += gravity * Time.deltaTime;
 
-        controller.Move(velocity * Time.deltaTime);
+        //Debug.Log(velocity);
+
+        // not on platform
+        if (transform.parent == null)
+            controller.Move(velocity * Time.deltaTime);
+
+
+
+
+        // open or close inventory UI
+        if (Input.GetKeyDown(KeyCode.I))
+        {
+            inventoryActive = !inventoryActive;
+            inventory.SetActive(inventoryActive);
+        }
+
+
     }
 
     void OnDrawGizmos()
@@ -69,5 +99,19 @@ public class PlayerBehaviour : MonoBehaviour
         Gizmos.color = Color.white;
         Gizmos.DrawWireSphere(groundCheck.position, groundRadius);
     }
+
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (other.gameObject.tag == "Platform")
+            transform.parent = other.gameObject.transform;
+    }
+
+    private void OnTriggerExit(Collider other)
+    {
+        if (other.gameObject.tag == "Platform")
+            transform.parent = null;
+    }
+
 
 }
