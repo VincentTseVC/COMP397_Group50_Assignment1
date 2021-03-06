@@ -28,6 +28,7 @@ public class EnemyBehaviour : MonoBehaviour
     public NavMeshAgent navMeshAgent;
 
     public Transform player;
+    public PlayerBehaviour playerBehaviour;
 
     public HealthBar healthBar;
 
@@ -35,7 +36,8 @@ public class EnemyBehaviour : MonoBehaviour
 
     private Vector3 originalPosition;
     private Animator animator;
-    private bool isAttacking = false;
+    private bool canAttack = true;
+    private bool canMove = true;
     private bool isNearPlayer = false;
 
     // Start is called before the first frame update
@@ -46,14 +48,16 @@ public class EnemyBehaviour : MonoBehaviour
         healthBar.SetMaxHealth(maxHealth);
         currentHealth = maxHealth;
         originalPosition = transform.position;
+        playerBehaviour = player.GetComponent<PlayerBehaviour>();
 
     }
 
     // Update is called once per frame
-    void Update()
+    void FixedUpdate()
     {
 
-
+        if (canMove)
+        {
             float distanceFromPlayer = Vector3.Distance(transform.position, player.position);
 
             if (distanceFromPlayer <= attackRadius)
@@ -64,12 +68,12 @@ public class EnemyBehaviour : MonoBehaviour
 
             if (distanceFromOrigin > attackRadius)
                 navMeshAgent.SetDestination(originalPosition);
+        }
 
-            if (isNearPlayer == true)
+
+            if (isNearPlayer == true && canAttack)
             {
-                animator.SetInteger("AnimState", (int)SlimeState.ATTACK);
-                animator.SetInteger("AnimState", (int)SlimeState.IDLE);
-            //StartCoroutine(Attack());
+                StartCoroutine(Attack());
              }
  
 
@@ -84,15 +88,18 @@ public class EnemyBehaviour : MonoBehaviour
 
     public void TakeDamange(int damage)
     {
+        canAttack = false;
         currentHealth -= damage;
 
         healthBar.SetHealth(currentHealth);
-        animator.SetInteger("AnimState", (int)SlimeState.HURT);
+
+        //StartCoroutine(Hurt());
+        
         if(currentHealth <= 0)
         {
             StartCoroutine(Death());
         }
-        animator.SetInteger("AnimState", (int)SlimeState.IDLE);
+        canAttack = true;
 
     }
 
@@ -113,17 +120,28 @@ public class EnemyBehaviour : MonoBehaviour
 
     IEnumerator Attack()
     {
-        isAttacking = true;
+        canAttack = false;
         animator.SetInteger("AnimState", (int)SlimeState.ATTACK);
-        yield return new WaitForSeconds(300 * Time.deltaTime);
-        isAttacking = false;
+        playerBehaviour.TakeDamange(5);
+        yield return new WaitForSeconds(1f);
+        animator.SetInteger("AnimState", (int)SlimeState.IDLE);
+        canAttack = true;
+    }
+
+    IEnumerator Hurt()
+    {
+        animator.SetInteger("AnimState", (int)SlimeState.HURT);
+        yield return new WaitForSeconds(1);
         animator.SetInteger("AnimState", (int)SlimeState.IDLE);
     }
 
     IEnumerator Death()
     {
+        canMove = false;
+
+        Debug.Log("Mob Dying");
         animator.SetInteger("AnimState", (int)SlimeState.DIE);
-        yield return new WaitForSeconds(300 * Time.deltaTime);
+        yield return new WaitForSeconds(2);
         Destroy(this.gameObject);
     }
 }

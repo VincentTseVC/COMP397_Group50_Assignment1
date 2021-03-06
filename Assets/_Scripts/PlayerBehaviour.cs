@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.SceneManagement;
 
 /**
  * Vincent Tse.
@@ -15,7 +15,8 @@ public enum PaladinState
     IDLE,
     RUN,
     JUMP,
-    SLASH
+    SLASH,
+    DEATH
 }
 
 public class PlayerBehaviour : MonoBehaviour
@@ -37,8 +38,12 @@ public class PlayerBehaviour : MonoBehaviour
 
     public GameController gameController;
 
+    [Header("Audio Sources")]
     public AudioSource jump;
     private AudioSource _jump;
+    public AudioSource slashSlime;
+    public AudioSource deathScream;
+
 
     [Header("UI")]
     public GameObject inventory;
@@ -55,8 +60,13 @@ public class PlayerBehaviour : MonoBehaviour
     [Header("Animation")]
     public Animator animator;
 
-    private bool isAttacking;
+    [Header("HealthBar")]
+    public HealthBar healthBar;
+    public int maxHealth = 100;
+    public int currentHealth;
 
+    private bool isAttacking;
+    private bool isDead;
 
 
 
@@ -64,14 +74,18 @@ public class PlayerBehaviour : MonoBehaviour
     {
         controller = GetComponent<CharacterController>();
         _jump = gameController.audioSources[(int)SoundClip.JUMP];
+        healthBar.SetMaxHealth(maxHealth);
+        currentHealth = maxHealth;
 
         inventory.SetActive(inventoryActive);
+
+
     }
 
 
     void Update()
     {
-        if(isAttacking == false)
+        if(isAttacking == false && isDead == false)
         {
 
 
@@ -116,7 +130,10 @@ public class PlayerBehaviour : MonoBehaviour
             controller.Move(velocity * Time.deltaTime);
 
 
-
+        if (Input.GetKeyDown(KeyCode.T))
+        {
+            knockBack(70);
+        }
 
         // open or close inventory UI
         if (Input.GetKeyDown(KeyCode.I))
@@ -140,9 +157,27 @@ public class PlayerBehaviour : MonoBehaviour
         Debug.Log("Attacking");
         isAttacking = true;
         animator.SetInteger("AnimState", (int)PaladinState.SLASH);
-        yield return new WaitForSeconds(animator.GetCurrentAnimatorStateInfo(0).length + animator.GetCurrentAnimatorStateInfo(0).normalizedTime);
+        slashSlime.Play();
+        yield return new WaitForSeconds(1.0f);
         isAttacking = false;
         Debug.Log("Finished Attacking");
+    }
+
+    public void TakeDamange(int damage)
+    {
+        knockBack(70);
+        currentHealth -= damage;
+
+        healthBar.SetHealth(currentHealth);
+
+        //StartCoroutine(Hurt());
+
+        if (currentHealth <= 0)
+        {
+            Debug.Log("GameOver");
+            StartCoroutine(Death());
+        }
+
     }
 
     void OnDrawGizmos()
@@ -207,5 +242,19 @@ public class PlayerBehaviour : MonoBehaviour
         }
     }
 
+    public void knockBack(int force)
+    {
+        Vector3 move = -transform.forward * force;
+        this.GetComponent<Rigidbody>().AddForce(0, 0, -force, ForceMode.Impulse);
+        controller.Move(move * Time.deltaTime);
+    }
+    IEnumerator Death()
+    {
+        isDead = true;
+        animator.SetInteger("AnimState", (int)PaladinState.DEATH);
+        deathScream.Play();
+        yield return new WaitForSeconds(2);
+        SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
 
 }
