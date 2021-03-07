@@ -49,6 +49,7 @@ public class PlayerBehaviour : MonoBehaviour
     [Header("UI")]
     public GameObject inventory;
     private bool inventoryActive = false;
+    public bool isTalking = false;
 
 
     [Header("Armor")]
@@ -84,9 +85,24 @@ public class PlayerBehaviour : MonoBehaviour
     }
 
 
-    void Update()
+    void FixedUpdate()
     {
-        if(isAttacking == false && isDead == false)
+        if (isTalking)
+        {
+            animator.SetInteger("AnimState", (int)PaladinState.IDLE);
+            return;
+        }
+
+        //if (isAttacking) return;
+
+        //if (gotSword && Input.GetMouseButton(0) && !isAttacking && isGrounded)
+        //{
+        //    StartCoroutine(Slash());
+        //    return;
+        //}
+
+
+        if (!isAttacking && !isDead)
         {
             isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, groundMask);
 
@@ -96,17 +112,17 @@ public class PlayerBehaviour : MonoBehaviour
             float x = Input.GetAxis("Horizontal");
             float z = Input.GetAxis("Vertical");
 
-            if(x ==0 || z == 0 )
+            if (x == 0 || z == 0)
             {
                 animator.SetInteger("AnimState", (int)PaladinState.IDLE);
             }
 
-            if (x != 0 || z != 0)
+            if ((x != 0 || z != 0))
             {
                 Vector3 move = transform.right * x + transform.forward * z;
                 controller.Move(move * maxSpeed * Time.deltaTime);
-                animator.SetInteger("AnimState", (int)PaladinState.RUN);
-
+                //if (isGrounded)
+                    animator.SetInteger("AnimState", (int)PaladinState.RUN);
             }
 
             if (Input.GetButton("Jump") && isGrounded)
@@ -119,6 +135,7 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
 
+
         velocity.y += gravity * Time.deltaTime;
 
         // not on platform
@@ -126,10 +143,7 @@ public class PlayerBehaviour : MonoBehaviour
             controller.Move(velocity * Time.deltaTime);
 
 
-        if (Input.GetKeyDown(KeyCode.T))
-        {
-            knockBack(70);
-        }
+
 
         // open or close inventory UI
         if (Input.GetKeyDown(KeyCode.I))
@@ -144,6 +158,11 @@ public class PlayerBehaviour : MonoBehaviour
             StartCoroutine(Slash());
         }
 
+
+        //if (Input.GetKeyDown(KeyCode.T))
+        //{
+        //    knockBack(70);
+        //}
 
 
 
