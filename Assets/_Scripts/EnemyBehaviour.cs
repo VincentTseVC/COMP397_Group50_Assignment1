@@ -33,6 +33,7 @@ public class EnemyBehaviour : MonoBehaviour
     public HealthBar healthBar;
 
     public float attackRadius = 10.0f;
+    public AudioSource attack;
 
     private Vector3 originalPosition;
     private Animator animator;
@@ -123,6 +124,7 @@ public class EnemyBehaviour : MonoBehaviour
         canAttack = false;
         animator.SetInteger("AnimState", (int)SlimeState.ATTACK);
         playerBehaviour.TakeDamange(5);
+        attack.Play();
         yield return new WaitForSeconds(1f);
         animator.SetInteger("AnimState", (int)SlimeState.IDLE);
         canAttack = true;

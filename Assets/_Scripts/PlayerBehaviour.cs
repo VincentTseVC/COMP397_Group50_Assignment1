@@ -41,8 +41,9 @@ public class PlayerBehaviour : MonoBehaviour
     [Header("Audio Sources")]
     public AudioSource jump;
     private AudioSource _jump;
-    public AudioSource slashSlime;
+    public AudioSource slash;
     public AudioSource deathScream;
+    public AudioSource hurt;
 
 
     [Header("UI")]
@@ -64,6 +65,8 @@ public class PlayerBehaviour : MonoBehaviour
     public HealthBar healthBar;
     public int maxHealth = 100;
     public int currentHealth;
+
+
 
     private bool isAttacking;
     private bool isDead;
@@ -150,8 +153,9 @@ public class PlayerBehaviour : MonoBehaviour
         Debug.Log("Attacking");
         isAttacking = true;
         animator.SetInteger("AnimState", (int)PaladinState.SLASH);
-        slashSlime.Play();
+        slash.PlayDelayed(0.5f);
         yield return new WaitForSeconds(1.0f);
+ 
         isAttacking = false;
         Debug.Log("Finished Attacking");
     }
@@ -159,13 +163,14 @@ public class PlayerBehaviour : MonoBehaviour
     public void TakeDamange(int damage)
     {
         knockBack(70);
+        hurt.Play();
         currentHealth -= damage;
 
         healthBar.SetHealth(currentHealth);
 
         //StartCoroutine(Hurt());
 
-        if (currentHealth <= 0)
+        if (currentHealth <= 0 && !isDead )
         {
             Debug.Log("GameOver");
             StartCoroutine(Death());
@@ -239,8 +244,9 @@ public class PlayerBehaviour : MonoBehaviour
     public void knockBack(int force)
     {
         Vector3 move = -transform.forward * force;
-        this.GetComponent<Rigidbody>().AddForce(0, 0, -force, ForceMode.Impulse);
+        //this.GetComponent<Rigidbody>().AddForce(0, 0, -force, ForceMode.Impulse);
         controller.Move(move * Time.deltaTime);
+
     }
     IEnumerator Death()
     {
