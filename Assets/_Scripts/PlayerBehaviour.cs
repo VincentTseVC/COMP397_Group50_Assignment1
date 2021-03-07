@@ -78,8 +78,6 @@ public class PlayerBehaviour : MonoBehaviour
         currentHealth = maxHealth;
 
         inventory.SetActive(inventoryActive);
-
-
     }
 
 
@@ -87,43 +85,38 @@ public class PlayerBehaviour : MonoBehaviour
     {
         if(isAttacking == false && isDead == false)
         {
+            isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, groundMask);
 
+            if (isGrounded && velocity.y < 0)
+                velocity.y = -2.0f;
 
-        isGrounded = Physics.CheckSphere(groundCheck.position, groundRadius, groundMask);
+            float x = Input.GetAxis("Horizontal");
+            float z = Input.GetAxis("Vertical");
 
-        if (isGrounded && velocity.y < 0)
-            velocity.y = -2.0f;
+            if(x ==0 || z == 0 )
+            {
+                animator.SetInteger("AnimState", (int)PaladinState.IDLE);
+            }
 
-        float x = Input.GetAxis("Horizontal");
-        float z = Input.GetAxis("Vertical");
-        if(x ==0 || z == 0 )
-        {
-            animator.SetInteger("AnimState", (int)PaladinState.IDLE);
-        }
+            if (x != 0 || z != 0)
+            {
+                Vector3 move = transform.right * x + transform.forward * z;
+                controller.Move(move * maxSpeed * Time.deltaTime);
+                animator.SetInteger("AnimState", (int)PaladinState.RUN);
 
-        if (x != 0 || z != 0)
-        {
-            Vector3 move = transform.right * x + transform.forward * z;
-            controller.Move(move * maxSpeed * Time.deltaTime);
-            animator.SetInteger("AnimState", (int)PaladinState.RUN);
+            }
 
-        }
+            if (Input.GetButton("Jump") && isGrounded)
+            {
+                velocity.y = Mathf.Sqrt(jumpHeight * -2.0f * gravity);
+                animator.SetInteger("AnimState", (int)PaladinState.JUMP);
 
-        if (Input.GetButton("Jump") && isGrounded)
-        {
-            velocity.y = Mathf.Sqrt(jumpHeight * -2.0f * gravity);
-            animator.SetInteger("AnimState", (int)PaladinState.JUMP);
-
-            //play jump audio
-            jump.Play();
-
+                //play jump audio
+                jump.Play();
+            }
         }
 
         velocity.y += gravity * Time.deltaTime;
-
-            //Debug.Log(velocity);
-
-        }
 
         // not on platform
         if (transform.parent == null)
@@ -202,6 +195,7 @@ public class PlayerBehaviour : MonoBehaviour
         if (other.gameObject.tag == "Platform")
             transform.parent = null;
     }
+
     private void OnTriggerStay(Collider other)
     {
         if(other.gameObject.tag == "Sword")
