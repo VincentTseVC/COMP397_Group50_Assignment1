@@ -115,7 +115,7 @@ public class PlayerBehaviour : MonoBehaviour
             float x = Input.GetAxis("Horizontal");
             float z = Input.GetAxis("Vertical");
 
-            if (x == 0 || z == 0)
+            if (x == 0 && z == 0 && isGrounded)
             {
                 animator.SetInteger("AnimState", (int)PaladinState.IDLE);
             }
@@ -132,6 +132,11 @@ public class PlayerBehaviour : MonoBehaviour
             {
                 velocity.y = Mathf.Sqrt(jumpHeight * -2.0f * gravity);
                 animator.SetInteger("AnimState", (int)PaladinState.JUMP);
+
+                if(animator.GetInteger("AnimState") == (int)PaladinState.JUMP)
+                {
+                    animator.Play((int)PaladinState.JUMP, -1, 0f);
+                }
 
                 //play jump audio
                 jump.Play();
@@ -157,14 +162,13 @@ public class PlayerBehaviour : MonoBehaviour
 
         if(isNearSword && Input.GetKeyDown(KeyCode.F) && gotSword == false)
         {
-            Debug.Log("Picking up sword");
             sword.SetActive(true);
             swordItem.SetActive(false);
             gotSword = true;
         }
 
         //slash
-        if (gotSword && Input.GetMouseButton(0) && isAttacking == false)
+        if (gotSword && Input.GetMouseButton(0) && isAttacking == false && isGrounded)
         {
             StartCoroutine(Slash());
         }
@@ -172,10 +176,8 @@ public class PlayerBehaviour : MonoBehaviour
         //temp key to use potion before implementing inventory
         if ((Input.GetKeyDown(KeyCode.H)))
         {
-            Debug.Log("pressed H");
             if (gameController.potionCount > 0)
             {
-                Debug.Log("Using Potion");
                 currentHealth += healAmount;
                 gameController.usePotion();
                 healthBar.SetHealth(currentHealth);
@@ -195,14 +197,12 @@ public class PlayerBehaviour : MonoBehaviour
 
     IEnumerator Slash()
     {
-        Debug.Log("Attacking");
         isAttacking = true;
         animator.SetInteger("AnimState", (int)PaladinState.SLASH);
         slash.PlayDelayed(0.5f);
         yield return new WaitForSeconds(1.0f);
  
         isAttacking = false;
-        Debug.Log("Finished Attacking");
     }
 
     public void TakeDamange(int damage)
@@ -217,7 +217,6 @@ public class PlayerBehaviour : MonoBehaviour
 
         if (currentHealth <= 0 && !isDead )
         {
-            Debug.Log("GameOver");
             StartCoroutine(Death());
         }
 
@@ -270,8 +269,8 @@ public class PlayerBehaviour : MonoBehaviour
 
         if (other.gameObject.tag == "Shield")
         {
-            Debug.Log("Near Shield");
-            //pick up sword
+
+            //pick up shield
             if (Input.GetKeyDown(KeyCode.F) && gotShield == false)
             {
                 Debug.Log("Picking up Shield");
@@ -301,6 +300,7 @@ public class PlayerBehaviour : MonoBehaviour
         yield return new WaitForSeconds(2);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
     }
+
 
     public void usePotion()
     {
