@@ -56,8 +56,10 @@ public class PlayerBehaviour : MonoBehaviour
     public bool gotShield = false;
     public GameObject shield;
 
+    public bool isNearSword = false;
     public bool gotSword = false;
     public GameObject sword;
+    public GameObject swordItem;
 
     [Header("Animation")]
     public Animator animator;
@@ -66,6 +68,7 @@ public class PlayerBehaviour : MonoBehaviour
     public HealthBar healthBar;
     public int maxHealth = 100;
     public int currentHealth;
+    public int healAmount = 50;
 
 
 
@@ -85,7 +88,7 @@ public class PlayerBehaviour : MonoBehaviour
     }
 
 
-    void FixedUpdate()
+    void Update()
     {
         if (isTalking)
         {
@@ -152,12 +155,32 @@ public class PlayerBehaviour : MonoBehaviour
             inventory.SetActive(inventoryActive);
         }
 
+        if(isNearSword && Input.GetKeyDown(KeyCode.F) && gotSword == false)
+        {
+            Debug.Log("Picking up sword");
+            sword.SetActive(true);
+            swordItem.SetActive(false);
+            gotSword = true;
+        }
+
         //slash
         if (gotSword && Input.GetMouseButton(0) && isAttacking == false)
         {
             StartCoroutine(Slash());
         }
 
+        //temp key to use potion before implementing inventory
+        if ((Input.GetKeyDown(KeyCode.H)))
+        {
+            Debug.Log("pressed H");
+            if (gameController.potionCount > 0)
+            {
+                Debug.Log("Using Potion");
+                currentHealth += healAmount;
+                gameController.usePotion();
+                healthBar.SetHealth(currentHealth);
+            }
+        }
 
         //if (Input.GetKeyDown(KeyCode.T))
         //{
@@ -166,7 +189,10 @@ public class PlayerBehaviour : MonoBehaviour
 
 
 
+
+
     }
+
     IEnumerator Slash()
     {
         Debug.Log("Attacking");
@@ -181,7 +207,7 @@ public class PlayerBehaviour : MonoBehaviour
 
     public void TakeDamange(int damage)
     {
-        knockBack(70);
+        knockBack(50);
         hurt.Play();
         currentHealth -= damage;
 
@@ -212,35 +238,34 @@ public class PlayerBehaviour : MonoBehaviour
         if (other.gameObject.CompareTag("Enemy") && isAttacking == true){
             other.gameObject.GetComponent<EnemyBehaviour>().TakeDamange(10);
         }
+        if (other.gameObject.CompareTag("Sword"))
+        {
+            swordItem = other.gameObject;
+            isNearSword = true;
+        }
+        if (other.gameObject.CompareTag("Trap"))
+        {
+            TakeDamange(5);
+        }
     }
 
     private void OnTriggerExit(Collider other)
     {
         if (other.gameObject.tag == "Platform")
             transform.parent = null;
+
+        if (other.gameObject.CompareTag("Sword"))
+        {
+            isNearSword = false;
+        }
     }
 
     private void OnTriggerStay(Collider other)
     {
-        if(other.gameObject.tag == "Sword")
+
+        if (other.gameObject.CompareTag("Enemy") && isAttacking == true)
         {
-            Debug.Log("Near Sword");
-            //pick up sword
-            if (Input.GetKeyDown(KeyCode.F) && gotSword == false)
-            {
-                Debug.Log("Picking up sword");
-                sword.SetActive(true);
-                other.gameObject.SetActive(false);
-                gotSword = true;
-
-            }
-
-            if (other.gameObject.CompareTag("Enemy") && isAttacking == true)
-            {
-                other.gameObject.GetComponent<EnemyBehaviour>().TakeDamange(10);
-            }
-
-
+            other.gameObject.GetComponent<EnemyBehaviour>().TakeDamange(10);
         }
 
         if (other.gameObject.tag == "Shield")
@@ -258,6 +283,7 @@ public class PlayerBehaviour : MonoBehaviour
 
 
         }
+
     }
 
     public void knockBack(int force)
@@ -274,6 +300,15 @@ public class PlayerBehaviour : MonoBehaviour
         deathScream.Play();
         yield return new WaitForSeconds(2);
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex + 1);
+    }
+
+    public void usePotion()
+    {
+        if(gameController.potionCount > 0)
+        {
+            currentHealth += healAmount;
+            gameController.usePotion();
+        }
     }
 
 }

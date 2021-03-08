@@ -212,7 +212,7 @@ AudioSource:
   serializedVersion: 4
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 3278e4c9c79357e4aa7c8f94614dc88b, type: 3}
-  m_PlayOnAwake: 1
+  m_PlayOnAwake: 0
   m_Volume: 1
   m_Pitch: 1
   Loop: 0
@@ -311,6 +311,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationController: {fileID: 8913428970957801176}
   chestOpen: {fileID: 8913428970305128023}
+  gameController: {fileID: 0}
+  dialogue:
+    name: New Item
+    sentences:
+    - You found a potion!
 --- !u!65 &4236177337051357307
 BoxCollider:
   m_ObjectHideFlags: 0

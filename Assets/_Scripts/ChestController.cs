@@ -9,6 +9,9 @@ public class ChestController : MonoBehaviour
 {
     [SerializeField] private Animator animationController;
     public AudioSource chestOpen;
+    public GameController gameController;
+
+    public Dialogue dialogue;
 
     private bool isOpened = false;
 
@@ -19,7 +22,14 @@ public class ChestController : MonoBehaviour
             animationController.SetBool("Triggered", true);
             chestOpen.Play();
             isOpened = true;
+            gameController.addPotion();
+            TriggerDialogue();
         }
 
+    }
+
+    public void TriggerDialogue()
+    {
+        FindObjectOfType<DialogueManager>().StartDialogue(dialogue, this.gameObject);
     }
 }

@@ -22,7 +22,7 @@ public class EnemyBehaviour : MonoBehaviour
 
     public int maxHealth = 100;
 
-    public int currentHealth;
+    public int currentHealth = 100;
 
 
     public NavMeshAgent navMeshAgent;
@@ -47,9 +47,10 @@ public class EnemyBehaviour : MonoBehaviour
         navMeshAgent = GetComponent<NavMeshAgent>();
         animator = GetComponent<Animator>();
         healthBar.SetMaxHealth(maxHealth);
-        currentHealth = maxHealth;
+        //currentHealth = maxHealth;
         originalPosition = transform.position;
         playerBehaviour = player.GetComponent<PlayerBehaviour>();
+        healthBar.SetHealth(currentHealth);
 
     }
 
@@ -86,6 +87,7 @@ public class EnemyBehaviour : MonoBehaviour
         //    TakeDamange(20);
 
     }
+
 
     public void TakeDamange(int damage)
     {

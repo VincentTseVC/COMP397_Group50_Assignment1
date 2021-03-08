@@ -143,7 +143,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5492579230901204353}
-  m_LocalRotation: {x: -0, y: 1, z: -0, w: -0.00000016292068}
+  m_LocalRotation: {x: 0, y: -1, z: 0, w: 0}
   m_LocalPosition: {x: 229.82, y: 1.4, z: 252.81}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -152,7 +152,7 @@ Transform:
   - {fileID: 5492579230900936759}
   m_Father: {fileID: 0}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: -180, z: 0}
 --- !u!95 &5492579230893804233
 Animator:
   serializedVersion: 3
@@ -310,6 +310,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationController: {fileID: 5492579230893804233}
   chestOpen: {fileID: 5492579231106580491}
+  gameController: {fileID: 0}
+  dialogue:
+    name: New Item
+    sentences:
+    - You found a potion!
 --- !u!1 &5492579230901248735
 GameObject:
   m_ObjectHideFlags: 0

@@ -15,6 +15,10 @@ public class GameController : MonoBehaviour
     public Text crystalText;
     public int crystalCount = 0;
 
+    [Header("Potion Count")]
+    public Text potionText;
+    public int potionCount = 0;
+
     // Start is called before the first frame update
     void Start()
     {
@@ -32,5 +36,16 @@ public class GameController : MonoBehaviour
         crystalCount++;
         crystalText.text = ""+ crystalCount;
     }
-    
+
+    public void addPotion()
+    {
+        potionCount++;
+        potionText.text = "" + potionCount;
+    }
+
+    public void usePotion()
+    {
+        potionCount--;
+        potionText.text = "" + potionCount;
+    }
 }
