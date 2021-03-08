@@ -167,6 +167,8 @@ public class PlayerBehaviour : MonoBehaviour
             gotSword = true;
         }
 
+
+
         //slash
         if (gotSword && Input.GetMouseButton(0) && isAttacking == false && isGrounded)
         {
@@ -184,16 +186,20 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
 
-        //if (Input.GetKeyDown(KeyCode.T))
-        //{
-        //    knockBack(70);
-        //}
+        if ((Input.GetKeyDown(KeyCode.M)))
+        {
+
+            transform.position.z = 2000f;
+            //if (Input.GetKeyDown(KeyCode.T))
+            //{
+            //    knockBack(70);
+            //}
 
 
 
 
 
-    }
+        }
 
     IEnumerator Slash()
     {
@@ -309,6 +315,50 @@ public class PlayerBehaviour : MonoBehaviour
             currentHealth += healAmount;
             gameController.usePotion();
         }
+    }
+
+    public void SavePlayer()
+    {
+        Debug.Log("saving");
+        SaveSystem.SavePlayer(this);
+    }
+    public GameObject pauseMenuUI;
+    public void LoadPlayer()
+    {
+
+        Time.timeScale = 1f;
+        pauseMenuUI.SetActive(false);
+        Cursor.lockState = CursorLockMode.Locked;
+
+        PlayerData data = SaveSystem.LoadPlayer();
+
+        Vector3 position;
+
+        position.x = data.position[0];
+        position.y = data.position[1];
+        position.z = data.position[2];
+
+        controller.transform.position = position;
+
+        currentHealth = data.health;
+        
+        if (data.sword)
+        {
+            
+            sword.SetActive(true);
+            swordItem.SetActive(false);
+            gotSword = true;
+        }
+        gotShield = data.shield;
+        if (gotShield)
+        {
+            shield.SetActive(true);
+            
+        }
+
+
+        
+        
     }
 
 }
