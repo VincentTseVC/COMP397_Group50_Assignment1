@@ -48,4 +48,35 @@ public class GameController : MonoBehaviour
         potionCount--;
         potionText.text = "" + potionCount;
     }
+
+    public int getCrystal()
+    {
+        return crystalCount;
+    }
+
+    public void SaveGame()
+    {
+        Debug.Log("saving");
+
+        SaveSystem.SaveGame(this);
+
+    }
+
+    
+    public void LoadGame()
+    {
+
+
+
+        GameData data = SaveSystem.LoadGame();
+
+        Debug.Log(data.crystals);
+        enabled = false;
+        crystalCount = data.crystals;
+        crystalText.text = "" + crystalCount;
+        potionCount = data.potions;
+        potionText.text = "" + potionCount;
+        enabled = true;
+
+    }
 }

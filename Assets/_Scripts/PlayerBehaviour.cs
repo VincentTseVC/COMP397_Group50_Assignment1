@@ -316,7 +316,10 @@ public class PlayerBehaviour : MonoBehaviour
     public void SavePlayer()
     {
         Debug.Log("saving");
+
+        
         SaveSystem.SavePlayer(this);
+
     }
     public GameObject pauseMenuUI;
     public void LoadPlayer()
@@ -331,7 +334,7 @@ public class PlayerBehaviour : MonoBehaviour
         position.x = data.position[0];
         position.y = data.position[1];
         position.z = data.position[2];
-        Debug.Log(position.x);
+
 
         transform.position = position;
 
@@ -339,7 +342,7 @@ public class PlayerBehaviour : MonoBehaviour
         controller.transform.position = position;
         controller.enabled = true;
 
-        Debug.Log(transform.position.x);
+
 
 
         currentHealth = data.health;
@@ -348,8 +351,7 @@ public class PlayerBehaviour : MonoBehaviour
         if (data.sword)
         {
             
-            sword.SetActive(true);
-            swordItem.SetActive(false);
+            sword.SetActive(true);            
             gotSword = true;
         }
         gotShield = data.shield;
