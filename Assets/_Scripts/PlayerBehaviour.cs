@@ -186,20 +186,16 @@ public class PlayerBehaviour : MonoBehaviour
             }
         }
 
-        if ((Input.GetKeyDown(KeyCode.M)))
-        {
-
-            transform.position.z = 2000f;
-            //if (Input.GetKeyDown(KeyCode.T))
-            //{
-            //    knockBack(70);
-            //}
+        //if (Input.GetKeyDown(KeyCode.T))
+        //{
+        //    knockBack(70);
+        //}
 
 
 
 
 
-        }
+    }
 
     IEnumerator Slash()
     {
@@ -326,9 +322,7 @@ public class PlayerBehaviour : MonoBehaviour
     public void LoadPlayer()
     {
 
-        Time.timeScale = 1f;
-        pauseMenuUI.SetActive(false);
-        Cursor.lockState = CursorLockMode.Locked;
+        
 
         PlayerData data = SaveSystem.LoadPlayer();
 
@@ -337,11 +331,20 @@ public class PlayerBehaviour : MonoBehaviour
         position.x = data.position[0];
         position.y = data.position[1];
         position.z = data.position[2];
+        Debug.Log(position.x);
 
+        transform.position = position;
+
+        controller.enabled = false;
         controller.transform.position = position;
+        controller.enabled = true;
+
+        Debug.Log(transform.position.x);
+
 
         currentHealth = data.health;
-        
+        healthBar.SetHealth(currentHealth);
+
         if (data.sword)
         {
             
