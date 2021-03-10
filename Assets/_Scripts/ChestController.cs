@@ -15,6 +15,11 @@ public class ChestController : MonoBehaviour
 
     private bool isOpened = false;
 
+    private void Start()
+    {
+        gameController = FindObjectOfType<GameController>();
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if ((other.CompareTag("Player")) && (isOpened == false))

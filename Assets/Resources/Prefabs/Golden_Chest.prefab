@@ -311,7 +311,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   animationController: {fileID: 8913428970957801176}
   chestOpen: {fileID: 8913428970305128023}
-  gameController: {fileID: 0}
+  gameController: {fileID: 5588624524547814976, guid: 11884b7209dc2c8478ae90dcd9d990d2, type: 3}
   dialogue:
     name: New Item
     sentences:
